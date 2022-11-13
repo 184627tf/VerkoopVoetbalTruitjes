@@ -3,26 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GUI"
+        xmlns:viewmodels="clr-namespace:GUI.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:KlantenViewModel}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <TabControl>
-        <TabItem Header="Voetbal Truitjes">
-            <DataGrid>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header = "Name"/>
-                    <DataGridTextColumn Header = "Title"/>
-                    <DataGridCheckBoxColumn Header = "ReElected?"/>
-                    <DataGridComboBoxColumn Header = "Party"/>
-                </DataGrid.Columns>
-            </DataGrid>
-        </TabItem>
+        <TabItem Header="Voetbal Truitjes"/>
         <TabItem Header="Klanten">
-            <DataGrid>
+            <DataGrid ItemsSource="{Binding Klanten}" AutoGenerateColumns="False" CanUserAddRows="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Name}"
-                                Header="{Binding HeaderName}"
-                                Width="100">
+                    <DataGridTextColumn Binding="{Binding Id}"
+                                Width="100"
+                                IsReadOnly="True">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -30,14 +21,13 @@
                                         <RowDefinition Height="1*"/>
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Grid.Row="0" Text="ID" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Text="Klantnummer" HorizontalAlignment="Center"/>
                                     <TextBox Grid.Row="1" Name="IDSearch" Width="90"/>
                                 </Grid>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Binding="{Binding Name}"
-                                Header="{Binding HeaderName}"
+                    <DataGridTextColumn Binding="{Binding Naam}"
                                 Width="250">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
@@ -52,10 +42,18 @@
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Binding="{Binding Name}"
-                                Header="{Binding HeaderName}"
-                                Width="450">
-                        <DataGridTextColumn.HeaderTemplate>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding Adressen}" SelectedItem="{Binding Adres}" IsEditable="True" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Adres}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
                                 <Grid>
                                     <Grid.RowDefinitions>
@@ -63,11 +61,11 @@
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Text="Adres" HorizontalAlignment="Center"/>
-                                    <TextBox Grid.Row="1" Name="AdresSearch" Width="430"/>
+                                    <TextBox Grid.Row="1" Name="AdresSearch" Width="410"/>
                                 </Grid>
                             </DataTemplate>
-                        </DataGridTextColumn.HeaderTemplate>
-                    </DataGridTextColumn>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </TabItem>
