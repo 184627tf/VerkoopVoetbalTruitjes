@@ -6,7 +6,73 @@
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <TabControl>
+        <TabItem Header="Voetbal Truitjes">
+            <DataGrid>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header = "Name"/>
+                    <DataGridTextColumn Header = "Title"/>
+                    <DataGridCheckBoxColumn Header = "ReElected?"/>
+                    <DataGridComboBoxColumn Header = "Party"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </TabItem>
+        <TabItem Header="Klanten">
+            <DataGrid>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Name}"
+                                Header="{Binding HeaderName}"
+                                Width="100">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="ID" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Row="1" Name="IDSearch" Width="90"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Name}"
+                                Header="{Binding HeaderName}"
+                                Width="250">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="Naam" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Row="1" Name="NaamSearch" Width="240"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Name}"
+                                Header="{Binding HeaderName}"
+                                Width="450">
+                        <DataGridTextColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="1*"/>
+                                        <RowDefinition Height="1*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Text="Adres" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Row="1" Name="AdresSearch" Width="430"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTextColumn.HeaderTemplate>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </TabItem>
+        <TabItem Header="Bestellingen">
+        </TabItem>
 
-    </Grid>
+    </TabControl>
 </Window>
