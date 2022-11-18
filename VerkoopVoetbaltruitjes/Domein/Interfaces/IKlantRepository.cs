@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace Domein.Interfaces {
     public interface IKlantRepository {
+        public bool Exists(Klant klant);
         public IEnumerable<Klant> GeefKlanten();
+        public int VoegKlantToe(Klant klant);
     }
 }

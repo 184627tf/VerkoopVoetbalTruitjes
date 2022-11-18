@@ -1,6 +1,7 @@
 ﻿using Domein.Interfaces;
 using Domein.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,10 @@ namespace Domein.Service {
 
         public IEnumerable<Klant> GeefKlanten() {
             return _repository.GeefKlanten();
+        }
+
+        public int VoegKlantToe(Klant klant) {
+            return _repository.VoegKlantToe(klant);
         }
     }
 }

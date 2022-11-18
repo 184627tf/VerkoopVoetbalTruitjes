@@ -14,8 +14,8 @@ namespace GUI.ViewModels {
         private Klant _klant;
 
         public int? Id {
-            get { return _klant.KlantNummer; }
-            set { _klant.KlantNummer = value; }
+            get { return _klant.Id; }
+            set { _klant.Id = value; }
         }
         public string Naam {
             get { return _klant.Naam; }

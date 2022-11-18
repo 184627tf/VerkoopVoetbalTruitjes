@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Domein.Model {
     public class Klant {
-        private int? _klantNummer;
-        public int? KlantNummer { 
-            get { return _klantNummer; }
+        private int? _id;
+        public int? Id { 
+            get { return _id; }
             set { 
                 if (value.HasValue) {
                     if (value <= 0) throw new Exception($"Set ID: ID mag niet kleiner of gelijk aan 0 zijn, maar was {value.Value}.");
-                    _klantNummer = value.Value;
+                    _id = value.Value;
                 } else {
-                    _klantNummer = null;
+                    _id = null;
                 }
             }
         }
@@ -30,8 +30,8 @@ namespace Domein.Model {
 
         public Adres Adres { get; set; }
 
-        public Klant(int? klantenNummer = null, string naam = "naam", Adres adres = null) {
-            KlantNummer = klantenNummer;
+        public Klant(int? id = null, string naam = "naam", Adres adres = null) {
+            Id = id;
             Naam = naam;
             Adres = adres;
         }
