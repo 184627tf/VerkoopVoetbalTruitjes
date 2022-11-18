@@ -27,5 +27,8 @@ namespace Domein.Service {
             _repository.VerwijderKlant(klant);
         }
 
+        public void UpdateKlant(Klant klant) {
+            _repository.UpdateKlant(klant);
+        }
     }
 }

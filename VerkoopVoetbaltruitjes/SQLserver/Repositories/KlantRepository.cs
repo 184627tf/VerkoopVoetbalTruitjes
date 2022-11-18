@@ -86,6 +86,52 @@ namespace SQLserver.Repositories {
                 connection.Close();
             }
         }
+
+        public void UpdateKlant(Klant klant) {
+            string update = "UPDATE Klant SET naam=@naam, adres_id=@adresId WHERE id=@id;";
+            IDbConnection connection = new SqlConnection(_connectionString);
+            using (IDbCommand command = connection.CreateCommand()) {
+                connection.Open();
+                IDbTransaction transaction = connection.BeginTransaction();
+
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try {
+                    // See if adress exists -> if not add it
+                    // TODO: DB make adres UNIQUE in Adres (+ Cascading DELETE?)
+                    command.CommandText = "SELECT COUNT(*) FROM Adres WHERE adres=@adresnaam;";
+                    IDataParameter adresParameter = new SqlParameter("adresnaam", klant.Adres.Adresnaam);
+                    command.Parameters.Add(adresParameter);
+
+                    int amount = (int)command.ExecuteScalar();
+
+                    if (amount <= 0) {
+                        command.CommandText = "INSERT INTO Adres (adres) OUTPUT INSERTED.id VALUES (@adres);";
+                    } else {
+                        command.CommandText = "SELECT TOP 1 id FROM Adres WHERE adres=@adres;";
+                    }
+                    command.Parameters.Add(new SqlParameter("adres", klant.Adres.Adresnaam));
+                    int adresId = (int)command.ExecuteScalar();
+
+                    command.CommandText = update;
+                    command.Parameters.Add(new SqlParameter("id", klant.Id));
+                    command.Parameters.Add(new SqlParameter("naam", klant.Naam));
+                    command.Parameters.Add(new SqlParameter("adresId", adresId));
+
+                    command.ExecuteNonQuery();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex) {
+                    transaction.Rollback();
+                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
+                }
+                finally {
+                    connection.Close();
+                }
+            }
+        }
         
         public void VerwijderKlant(Klant klant) {
             string delete = "DELETE FROM Klant WHERE id=@id;";
@@ -139,6 +185,5 @@ namespace SQLserver.Repositories {
 
             return new Klant(klantnummer, naam, new Adres(adres));
         }
-
     }
 }

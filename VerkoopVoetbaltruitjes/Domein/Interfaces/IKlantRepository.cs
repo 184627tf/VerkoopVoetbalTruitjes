@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Domein.Interfaces {
     public interface IKlantRepository {
-        public bool Exists(Klant klant);
-        public IEnumerable<Klant> GeefKlanten();
-        public void VerwijderKlant(Klant klant);
         public int VoegKlantToe(Klant klant);
+        public IEnumerable<Klant> GeefKlanten();
+        public void UpdateKlant(Klant klant);
+        public void VerwijderKlant(Klant klant);
+        public bool Exists(Klant klant);
     }
 }

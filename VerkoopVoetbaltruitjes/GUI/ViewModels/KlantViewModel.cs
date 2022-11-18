@@ -19,11 +19,11 @@ namespace GUI.ViewModels {
         }
         public string Naam {
             get { return _klant.Naam; }
-            set { _klant.Naam = value; }
+            set { _klant.Naam = value; OnPropertyChanged(nameof(Naam)); }
         }
         public AdresViewModel? Adres {
             get { return new AdresViewModel(_klant.Adres); }
-            set { _klant.Adres = new Adres(value.Adres); }
+            set { _klant.Adres = new Adres(value.Adres); OnPropertyChanged(nameof(Adres)); }
         }
 
         private ObservableCollection<AdresViewModel> _adressen;
@@ -44,6 +44,9 @@ namespace GUI.ViewModels {
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName) {
+            Adres adres = new Adres(this.Adres.Adres);
+            Klant klant = new Klant(this.Id, this.Naam, adres);
+            ServiceProvider.klantService.UpdateKlant(klant);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

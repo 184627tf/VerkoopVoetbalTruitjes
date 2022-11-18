@@ -2,6 +2,7 @@
 using Domein.Interfaces;
 using Domein.Model;
 using Domein.Service;
+using GUI.Commands;
 using SQLserver.Repositories;
 using System;
 using System.Collections.Concurrent;
@@ -12,6 +13,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GUI.ViewModels {
     public class KlantenViewModel : INotifyPropertyChanged {
@@ -23,10 +26,10 @@ namespace GUI.ViewModels {
         public KlantenViewModel() {
             var adressen = AdressenViewModel.GeefAdresViewModels();
             _klanten = GeefKlantViewModels(adressen);
-            _klanten.CollectionChanged += _klanten_CollectionChanged;
+            _klanten.CollectionChanged += KlantenCollectionChanged;
         }
 
-        private void _klanten_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        private void KlantenCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
                     foreach (KlantViewModel klantVM in e.NewItems) {
@@ -42,6 +45,9 @@ namespace GUI.ViewModels {
                         Klant klant = new Klant(klantVM.Id, klantVM.Naam, adres);
                         ServiceProvider.klantService.VerwijderKlant(klant);
                     }
+                    break;
+                case NotifyCollectionChangedAction.Reset:
+                    // Doe niets??
                     break;
             }
         }
