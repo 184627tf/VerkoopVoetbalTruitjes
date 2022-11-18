@@ -37,6 +37,11 @@ namespace GUI.ViewModels {
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
+                    foreach (KlantViewModel klantVM in e.OldItems) {
+                        Adres adres = new Adres(klantVM.Adres.Adres);
+                        Klant klant = new Klant(klantVM.Id, klantVM.Naam, adres);
+                        ServiceProvider.klantService.VerwijderKlant(klant);
+                    }
                     break;
             }
         }

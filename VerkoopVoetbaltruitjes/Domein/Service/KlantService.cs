@@ -22,5 +22,10 @@ namespace Domein.Service {
         public int VoegKlantToe(Klant klant) {
             return _repository.VoegKlantToe(klant);
         }
+
+        public void VerwijderKlant(Klant klant) {
+            _repository.VerwijderKlant(klant);
+        }
+
     }
 }

@@ -24,7 +24,7 @@ namespace SQLserver.Repositories {
 
                 try {
                     // See if adress exists -> if not add it
-                    // TODO: DB make adres UNIQUE in Adres
+                    // TODO: DB make adres UNIQUE in Adres (+ Cascading DELETE?)
                     command.CommandText = "SELECT COUNT(*) FROM Adres WHERE adres=@adresnaam;";
                     IDataParameter adresParameter = new SqlParameter("adresnaam", klant.Adres.Adresnaam);
                     command.Parameters.Add(adresParameter);
@@ -86,6 +86,27 @@ namespace SQLserver.Repositories {
                 connection.Close();
             }
         }
+        
+        public void VerwijderKlant(Klant klant) {
+            string delete = "DELETE FROM Klant WHERE id=@id;";
+            IDbConnection connection = new SqlConnection(_connectionString);
+            using (IDbCommand command = connection.CreateCommand()) {
+                connection.Open();
+                try {
+                    command.CommandText = delete;
+                    IDataParameter idParameter = new SqlParameter("id", klant.Id);
+                    command.Parameters.Add(idParameter);
+
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex) {
+                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
+                }
+                finally {
+                    connection.Close();
+                }
+            }
+        }
 
         public bool Exists(Klant klant) {
             string query = "SELECT COUNT(*) FROM Klant WHERE id=@id;";
@@ -118,5 +139,6 @@ namespace SQLserver.Repositories {
 
             return new Klant(klantnummer, naam, new Adres(adres));
         }
+
     }
 }
