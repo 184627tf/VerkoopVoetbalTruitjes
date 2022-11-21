@@ -4,3 +4,18 @@
 2022-11-13 11:00 - 16:00
 	Begin GUI + GeefKlanten
 
+2022-11-18 15:00 - 18:00
+	CRUD klanten
+
+2022-11-21 12:30 - 15:45
+	Zoekfunctie klanten
+
+2022-11-21 17:00 - 19:00
+	Beheerscherm adressen
+
+2022-11-21 19:30 - 21:00
+	Refactor
+
+
+
+
