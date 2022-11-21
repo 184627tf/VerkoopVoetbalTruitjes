@@ -1,13 +1,8 @@
 ﻿using Domein.Model;
-using Domein.Service;
-using SQLserver.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GUI.ViewModels {
     public class KlantViewModel : INotifyPropertyChanged {
@@ -42,12 +37,23 @@ namespace GUI.ViewModels {
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+        private void NotifyPropertyChanged(String info) {
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
 
         protected void OnPropertyChanged(string propertyName) {
-            Adres adres = new Adres(this.Adres.Adres);
-            Klant klant = new Klant(this.Id, this.Naam, adres);
-            ServiceProvider.klantService.UpdateKlant(klant);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            switch (propertyName) {
+                case (nameof(Id)):
+                case (nameof(Naam)):
+                case (nameof(Adres)):
+                    Adres adres = new Adres(this.Adres.Adres);
+                    Klant klant = new Klant(this.Id, this.Naam, adres);
+                    ServiceProvider.klantService.UpdateKlant(klant);
+                    break;
+            }
+            NotifyPropertyChanged(propertyName);
         }
     }
 }

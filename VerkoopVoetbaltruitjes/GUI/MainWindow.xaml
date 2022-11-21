@@ -9,20 +9,20 @@
     <TabControl>
         <TabItem Header="Voetbal Truitjes"/>
         <TabItem Header="Klanten">
-            <DataGrid ItemsSource="{Binding Klanten}" AutoGenerateColumns="False" CanUserAddRows="True">
+            <DataGrid ItemsSource="{Binding Klanten, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserAddRows="True">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Id}"
                                 Width="100"
                                 IsReadOnly="True">
                         <DataGridTextColumn.HeaderTemplate>
                             <DataTemplate>
-                                <Grid>
+                                <Grid DataContext="{Binding KlantenViewModel}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="1*"/>
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Text="Klantnummer" HorizontalAlignment="Center"/>
-                                    <TextBox Grid.Row="1" Name="IDSearch" Width="90"/>
+                                    <TextBox Grid.Row="1" Width="90" Text="{Binding DataContext.IdQuery, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
@@ -37,7 +37,7 @@
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Text="Naam" HorizontalAlignment="Center"/>
-                                    <TextBox Grid.Row="1" Name="NaamSearch" Width="240"/>
+                                    <TextBox Grid.Row="1" Width="240" Text="{Binding DataContext.NaamQuery, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
                             </DataTemplate>
                         </DataGridTextColumn.HeaderTemplate>
@@ -61,7 +61,7 @@
                                         <RowDefinition Height="1*"/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Grid.Row="0" Text="Adres" HorizontalAlignment="Center"/>
-                                    <TextBox Grid.Row="1" Name="AdresSearch" Width="410"/>
+                                    <TextBox Grid.Row="1" Width="410" Text="{Binding DataContext.AdresQuery, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"/>
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
