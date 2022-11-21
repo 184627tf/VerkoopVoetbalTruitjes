@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="GUI.Views.KlantenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GUI.Views" xmlns:viewmodel="clr-namespace:GUI.ViewModels"
+             mc:Ignorable="d" >
+    <UserControl.DataContext>
+        <viewmodel:KlantenViewModel/>
+    </UserControl.DataContext>
+    <DataGrid ItemsSource="{Binding Klanten, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserAddRows="True">
+        <DataGrid.Columns>
+            <DataGridTextColumn Binding="{Binding Id}"
+                        Width="100"
+                        IsReadOnly="True">
+                <DataGridTextColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid DataContext="{Binding KlantenViewModel}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Klantnummer" HorizontalAlignment="Center"/>
+                            <TextBox Grid.Row="1" Width="90" Text="{Binding DataContext.IdQuery, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTextColumn.HeaderTemplate>
+            </DataGridTextColumn>
+            <DataGridTextColumn Binding="{Binding Naam}"
+                        Width="250">
+                <DataGridTextColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Naam" HorizontalAlignment="Center"/>
+                            <TextBox Grid.Row="1" Width="240" Text="{Binding DataContext.NaamQuery, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTextColumn.HeaderTemplate>
+            </DataGridTextColumn>
+            <DataGridTemplateColumn>
+                <DataGridTemplateColumn.CellEditingTemplate>
+                    <DataTemplate>
+                        <ComboBox ItemsSource="{Binding Adressen}" SelectedItem="{Binding Adres}" IsEditable="True" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellEditingTemplate>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Adres}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Adres" HorizontalAlignment="Center"/>
+                            <TextBox Grid.Row="1" Width="410" Text="{Binding DataContext.AdresQuery, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </DataTemplate>
+                </DataGridTemplateColumn.HeaderTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>

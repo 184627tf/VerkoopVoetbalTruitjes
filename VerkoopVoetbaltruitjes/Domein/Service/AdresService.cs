@@ -17,5 +17,9 @@ namespace Domein.Service {
         public IEnumerable<Adres> GeefAdressen() {
             return _repository.GeefAdressen();
         }
+
+        public void UpdateAdres(Adres adres) {
+            _repository.UpdateAdres(adres);
+        }
     }
 }

@@ -3,6 +3,7 @@ using Domein.Interfaces;
 using Domein.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -42,9 +43,32 @@ namespace SQLserver.Repositories {
         }
 
         private static Adres ParseAdres(SqlDataReader reader) {
+            int? id = (int)reader["id"];
             string adres = (string)reader["adres"];
 
-            return new Adres(adres);
+            return new Adres(id, adres);
+        }
+
+        public void UpdateAdres(Adres adres) {
+            string update = "UPDATE Adres SET adres=@adres WHERE id=@id;";
+            IDbConnection connection = new SqlConnection(_connectionString);
+            using (IDbCommand command = connection.CreateCommand()) {
+                connection.Open();
+
+                try {
+                    command.CommandText = update;
+                    command.Parameters.Add(new SqlParameter("id", adres.Id));
+                    command.Parameters.Add(new SqlParameter("adres", adres.Adresnaam));
+
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex) {
+                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
+                }
+                finally {
+                    connection.Close();
+                }
+            }
         }
     }
 }

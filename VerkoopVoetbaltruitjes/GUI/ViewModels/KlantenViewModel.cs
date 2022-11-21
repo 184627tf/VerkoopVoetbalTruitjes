@@ -39,16 +39,25 @@ namespace GUI.ViewModels {
         }
 
         public KlantenViewModel() {
+            VernieuwKlantViewModels();
+        }
+
+        public void VernieuwKlantViewModels() {
             var adressen = AdressenViewModel.GeefAdresViewModels();
-            Klanten = GeefKlantViewModels(adressen);
-            _klantenCopy = new ObservableCollection<KlantViewModel>(_klanten);
+            ObservableCollection<KlantViewModel> klanten = new();
+            foreach (Klant klant in ServiceProvider.klantService.GeefKlanten()) {
+                var klantVM = new KlantViewModel(klant, adressen);
+                klanten.Add(klantVM);
+            }
+            Klanten = klanten;
+            _klantenCopy = new(_klanten);
         }
 
         private void KlantenCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
                     foreach (KlantViewModel klantVM in e.NewItems) {
-                        Adres adres = new Adres(klantVM.Adres.Adres);
+                        Adres adres = new Adres(adres: klantVM.Adres.Adres);
                         Klant klant = new Klant(klantVM.Id, klantVM.Naam, adres);
                         int id = ServiceProvider.klantService.VoegKlantToe(klant);
                         klantVM.Id = id;
@@ -56,7 +65,7 @@ namespace GUI.ViewModels {
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     foreach (KlantViewModel klantVM in e.OldItems) {
-                        Adres adres = new Adres(klantVM.Adres.Adres);
+                        Adres adres = new Adres(adres: klantVM.Adres.Adres);
                         Klant klant = new Klant(klantVM.Id, klantVM.Naam, adres);
                         ServiceProvider.klantService.VerwijderKlant(klant);
                     }
@@ -64,23 +73,7 @@ namespace GUI.ViewModels {
             }
         }
 
-        public static ObservableCollection<KlantViewModel> GeefKlantViewModels(ObservableCollection<AdresViewModel> adressen) {
-            ObservableCollection<KlantViewModel> klanten = new();
-            foreach (Klant klant in ServiceProvider.klantService.GeefKlanten()) {
-                var klantVM = new KlantViewModel(klant, adressen);
-                klanten.Add(klantVM);
-            }
-            return klanten;
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void NotifyPropertyChanged(String info) {
-            if (PropertyChanged != null) {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
-        }
-
-        protected void OnPropertyChanged(string propertyName) {
+        private void OnPropertyChanged(string propertyName) {
             switch (propertyName) {
                 case (nameof(IdQuery)):
                 case (nameof(NaamQuery)):
@@ -101,5 +94,13 @@ namespace GUI.ViewModels {
             }
             NotifyPropertyChanged(propertyName);
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void NotifyPropertyChanged(String info) {
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
+        }
+
     }
 }

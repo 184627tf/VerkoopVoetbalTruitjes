@@ -183,7 +183,7 @@ namespace SQLserver.Repositories {
             int adresid = (int)reader["adresid"];
             string adres = (string)reader["adres"];
 
-            return new Klant(klantnummer, naam, new Adres(adres));
+            return new Klant(klantnummer, naam, new Adres(adresid, adres));
         }
     }
 }

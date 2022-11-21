@@ -8,5 +8,6 @@ using System.Threading.Tasks;
 namespace Domein.Interfaces {
     public interface IAdresRepository {
         public IEnumerable<Adres> GeefAdressen();
+        public void UpdateAdres(Adres adres);
     }
 }

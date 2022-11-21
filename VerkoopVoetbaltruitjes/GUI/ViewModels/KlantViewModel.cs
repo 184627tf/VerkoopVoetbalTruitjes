@@ -18,7 +18,7 @@ namespace GUI.ViewModels {
         }
         public AdresViewModel? Adres {
             get { return new AdresViewModel(_klant.Adres); }
-            set { _klant.Adres = new Adres(value.Adres); OnPropertyChanged(nameof(Adres)); }
+            set { _klant.Adres = new Adres(value.Id, value.Adres); OnPropertyChanged(nameof(Adres)); }
         }
 
         private ObservableCollection<AdresViewModel> _adressen;
@@ -43,12 +43,12 @@ namespace GUI.ViewModels {
             }
         }
 
-        protected void OnPropertyChanged(string propertyName) {
+        private void OnPropertyChanged(string propertyName) {
             switch (propertyName) {
                 case (nameof(Id)):
                 case (nameof(Naam)):
                 case (nameof(Adres)):
-                    Adres adres = new Adres(this.Adres.Adres);
+                    Adres adres = new Adres(adres: this.Adres.Adres);
                     Klant klant = new Klant(this.Id, this.Naam, adres);
                     ServiceProvider.klantService.UpdateKlant(klant);
                     break;

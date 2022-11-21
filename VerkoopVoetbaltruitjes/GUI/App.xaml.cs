@@ -1,14 +1,4 @@
-﻿using Domein.Interfaces;
-using Domein.Service;
-using GUI.ViewModels;
-using SQLserver.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace GUI {
     /// <summary>
@@ -19,7 +9,6 @@ namespace GUI {
             MainWindow window = new MainWindow()
             {
                 Title = "Voetbal truitjes beheer",
-                DataContext = new KlantenViewModel()
             };
 
             window.Show();
