@@ -4,6 +4,7 @@ using Domein.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using static SQLserver.Repositories.Repository;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -14,167 +15,81 @@ namespace SQLserver.Repositories {
         string _connectionString = Config.ConnectionString;
 
         public int VoegKlantToe(Klant klant) {
-            IDbConnection connection = new SqlConnection(_connectionString);
-            using (IDbCommand command = connection.CreateCommand()) {
-                connection.Open();
-                IDbTransaction transaction = connection.BeginTransaction();
+            return (int)VoerDBActieUit(c => VoegKlantToe(klant, c));
+        }
 
-                command.Connection = connection;
-                command.Transaction = transaction;
-
-                try {
-                    // See if adress exists -> if not add it
-                    // TODO: DB make adres UNIQUE in Adres (+ Cascading DELETE?)
-                    command.CommandText = "SELECT COUNT(*) FROM Adres WHERE adres=@adresnaam;";
-                    IDataParameter adresParameter = new SqlParameter("adresnaam", klant.Adres.Adresnaam);
-                    command.Parameters.Add(adresParameter);
-
-                    int amount = (int)command.ExecuteScalar();
-
-                    if (amount <= 0) {
-                        command.CommandText = "INSERT INTO Adres (adres) OUTPUT INSERTED.id VALUES (@adres);";
-                    } else {
-                        command.CommandText = "SELECT TOP 1 id FROM Adres WHERE adres=@adres;";
-                    }
-                    command.Parameters.Add(new SqlParameter("adres", klant.Adres.Adresnaam));
-                    int adresId = (int)command.ExecuteScalar();
-
-                    // Insert klant
-                    command.CommandText = "INSERT INTO Klant (naam, adres_id) OUTPUT INSERTED.id VALUES (@naam, @adres_id);";
-                    command.Parameters.Add(new SqlParameter("naam", klant.Naam));
-                    command.Parameters.Add(new SqlParameter("adres_id", adresId));
-                    int klantId = (int)command.ExecuteScalar();
-                    
-                    transaction.Commit();
-
-                    return klantId;
-                }
-                catch (Exception ex) {
-                    transaction.Rollback();
-                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
-                } finally {
-                    connection.Close();
-                }
+        public static int VoegKlantToe(Klant klant, IDbCommand command) {
+            if (AdresRepository.AdresExists(klant.Adres, command)) {
+                klant.Adres = AdresRepository.GeefAdres(klant.Adres.Adresnaam, command);
+            } else {
+                klant.Adres.Id = AdresRepository.VoegAdresToe(klant.Adres, command);
             }
+
+            command.CommandText = "INSERT INTO Klant (naam, adres_id) OUTPUT INSERTED.id VALUES (@naam, @adres_id);";
+            command.Parameters.Add(new SqlParameter("naam", klant.Naam));
+            command.Parameters.Add(new SqlParameter("adres_id", klant.Adres.Id));
+            return (int)command.ExecuteScalar();
         }
 
         public IEnumerable<Klant> GeefKlanten() {
+            return (IEnumerable<Klant>)VoerDBActieUit(c => GeefKlanten(c));
+        }
+
+        public static IEnumerable<Klant> GeefKlanten(IDbCommand command) {
             List<Klant> klanten = new List<Klant>();
-            string query = "SELECT k.id AS id, k.naam AS naam, a.id AS adresid, a.adres AS adres FROM Klant k INNER JOIN Adres a ON k.adres_id = a.id;";
-            SqlConnection connection = new SqlConnection(_connectionString);
-            using SqlCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT k.id AS id, k.naam AS naam, a.id AS adresid, a.adres AS adres FROM Klant k INNER JOIN Adres a ON k.adres_id = a.id;";
 
-            try {
-                connection.Open();
-
-                command.CommandText = query;
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read()) {
-                    klanten.Add(ParseKlant(reader));
-                }
-
-                reader.Close();
-
-                return klanten.AsEnumerable();
+            SqlDataReader reader = (SqlDataReader)command.ExecuteReader();
+            while (reader.Read()) {
+                klanten.Add(ParseKlant(reader));
             }
-            catch {
-                // TODO create execption
-                throw new Exception();
-            }
-            finally {
-                connection.Close();
-            }
+
+            reader.Close();
+
+            return klanten.AsEnumerable();
         }
 
         public void UpdateKlant(Klant klant) {
-            string update = "UPDATE Klant SET naam=@naam, adres_id=@adresId WHERE id=@id;";
-            IDbConnection connection = new SqlConnection(_connectionString);
-            using (IDbCommand command = connection.CreateCommand()) {
-                connection.Open();
-                IDbTransaction transaction = connection.BeginTransaction();
-
-                command.Connection = connection;
-                command.Transaction = transaction;
-
-                try {
-                    // See if adress exists -> if not add it
-                    // TODO: DB make adres UNIQUE in Adres (+ Cascading DELETE?)
-                    command.CommandText = "SELECT COUNT(*) FROM Adres WHERE adres=@adresnaam;";
-                    IDataParameter adresParameter = new SqlParameter("adresnaam", klant.Adres.Adresnaam);
-                    command.Parameters.Add(adresParameter);
-
-                    int amount = (int)command.ExecuteScalar();
-
-                    if (amount <= 0) {
-                        command.CommandText = "INSERT INTO Adres (adres) OUTPUT INSERTED.id VALUES (@adres);";
-                    } else {
-                        command.CommandText = "SELECT TOP 1 id FROM Adres WHERE adres=@adres;";
-                    }
-                    command.Parameters.Add(new SqlParameter("adres", klant.Adres.Adresnaam));
-                    int adresId = (int)command.ExecuteScalar();
-
-                    command.CommandText = update;
-                    command.Parameters.Add(new SqlParameter("id", klant.Id));
-                    command.Parameters.Add(new SqlParameter("naam", klant.Naam));
-                    command.Parameters.Add(new SqlParameter("adresId", adresId));
-
-                    command.ExecuteNonQuery();
-
-                    transaction.Commit();
-                }
-                catch (Exception ex) {
-                    transaction.Rollback();
-                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
-                }
-                finally {
-                    connection.Close();
-                }
+            VoerDBActieUit(c => UpdateKlant(klant, c));
+        }
+        public static void UpdateKlant(Klant klant, IDbCommand command) {
+            if (AdresRepository.AdresExists(klant.Adres, command)) {
+                klant.Adres.Id = AdresRepository.GeefAdres(klant.Adres.Adresnaam, command).Id;
+            } else {
+                klant.Adres.Id = AdresRepository.VoegAdresToe(klant.Adres, command);
             }
+            command.CommandText = "UPDATE Klant SET naam=@naam, adres_id=@adresId WHERE id=@id;";
+            command.Parameters.Add(new SqlParameter("id", klant.Id));
+            command.Parameters.Add(new SqlParameter("naam", klant.Naam));
+            command.Parameters.Add(new SqlParameter("adresId", klant.Adres.Id));
+
+            command.ExecuteNonQuery();
         }
         
         public void VerwijderKlant(Klant klant) {
-            string delete = "DELETE FROM Klant WHERE id=@id;";
-            IDbConnection connection = new SqlConnection(_connectionString);
-            using (IDbCommand command = connection.CreateCommand()) {
-                connection.Open();
-                try {
-                    command.CommandText = delete;
-                    IDataParameter idParameter = new SqlParameter("id", klant.Id);
-                    command.Parameters.Add(idParameter);
+            VoerDBActieUit(c => VerwijderKlant(klant, c));
+        }
 
-                    command.ExecuteNonQuery();
-                }
-                catch (Exception ex) {
-                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
-                }
-                finally {
-                    connection.Close();
-                }
-            }
+        public static void VerwijderKlant(Klant klant, IDbCommand command) {
+            command.CommandText = "DELETE FROM Klant WHERE id=@id;";
+            IDataParameter idParameter = new SqlParameter("id", klant.Id);
+            command.Parameters.Add(idParameter);
+
+            command.ExecuteNonQuery();
         }
 
         public bool Exists(Klant klant) {
-            string query = "SELECT COUNT(*) FROM Klant WHERE id=@id;";
-            IDbConnection connection = new SqlConnection(_connectionString);
-            using (IDbCommand command = connection.CreateCommand()) {
-                connection.Open();
-                try {
-                    command.CommandText = query;
-                    IDataParameter idParameter = new SqlParameter("id", klant.Id);
-                    command.Parameters.Add(idParameter);
+            return (bool)VoerDBActieUit(c => KlantExists(klant, c));
+        }
 
-                    int amount = (int)command.ExecuteScalar();
+        public static bool KlantExists(Klant klant, IDbCommand command) {
+            command.CommandText = "SELECT COUNT(*) FROM Klant WHERE id=@id;";
+            IDataParameter idParameter = new SqlParameter("id", klant.Id);
+            command.Parameters.Add(idParameter);
 
-                    return amount > 0;
-                }
-                catch (Exception ex) {
-                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
-                }
-                finally {
-                    connection.Close();
-                }
-            }
+            int amount = (int)command.ExecuteScalar();
+
+            return amount > 0;
         }
 
         private static Klant ParseKlant(SqlDataReader reader) {
