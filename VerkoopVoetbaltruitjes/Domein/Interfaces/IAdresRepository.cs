@@ -9,5 +9,7 @@ namespace Domein.Interfaces {
     public interface IAdresRepository {
         public IEnumerable<Adres> GeefAdressen();
         public void UpdateAdres(Adres adres);
+        public void VerwijderAdres(int id);
+        public int VoegAdresToe(Adres adres);
     }
 }

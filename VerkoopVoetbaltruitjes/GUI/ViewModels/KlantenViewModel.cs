@@ -8,7 +8,6 @@ using System.Linq;
 
 namespace GUI.ViewModels {
     public class KlantenViewModel : INotifyPropertyChanged {
-
         private ObservableCollection<KlantViewModel> _klanten;
         public IEnumerable<KlantViewModel> Klanten {
             get { return _klanten; }
@@ -101,6 +100,5 @@ namespace GUI.ViewModels {
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
-
     }
 }

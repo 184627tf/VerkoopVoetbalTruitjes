@@ -21,5 +21,13 @@ namespace Domein.Service {
         public void UpdateAdres(Adres adres) {
             _repository.UpdateAdres(adres);
         }
+
+        public void VerwijderAdres(Adres adres) {
+            _repository.VerwijderAdres(adres.Id.Value);
+        }
+
+        public int VoegAdresToe(Adres adres) {
+            return _repository.VoegAdresToe(adres);
+        }
     }
 }

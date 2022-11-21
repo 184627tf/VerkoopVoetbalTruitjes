@@ -63,7 +63,50 @@ namespace SQLserver.Repositories {
                     command.ExecuteNonQuery();
                 }
                 catch (Exception ex) {
-                    throw new Exception("VoegKlantToe: Er trad een fout op bij het raadplegen van de database.", ex);
+                    throw new Exception("UpdateAdres: Er trad een fout op bij het raadplegen van de database.", ex);
+                }
+                finally {
+                    connection.Close();
+                }
+            }
+        }
+
+        public void VerwijderAdres(int id) {
+            string delete = "DELETE FROM Adres WHERE id=@id";
+            IDbConnection connection = new SqlConnection(_connectionString);
+            using (IDbCommand command = connection.CreateCommand()) {
+                connection.Open();
+
+                try {
+                    command.CommandText = delete;
+                    command.Parameters.Add(new SqlParameter("id", id));
+
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex) {
+                    throw new Exception("VerwijderAdres: Er trad een fout op bij het raadplegen van de database.", ex);
+                }
+                finally {
+                    connection.Close();
+                }
+            }
+        }
+
+        public int VoegAdresToe(Adres adres) {
+            string insert = "INSERT INTO Adres (adres) OUTPUT INSERTED.id VALUES (@adres);";
+            IDbConnection connection = new SqlConnection(_connectionString);
+            using (IDbCommand command = connection.CreateCommand()) {
+                connection.Open();
+
+                try {
+                    command.CommandText = insert;
+                    command.Parameters.Add(new SqlParameter("adres", adres.Adresnaam));
+                    int id = (int)command.ExecuteScalar();
+
+                    return id;
+                }
+                catch (Exception ex) {
+                    throw new Exception("VoegAdresToe: Er trad een fout op bij het raadplegen van de database.", ex);
                 }
                 finally {
                     connection.Close();
